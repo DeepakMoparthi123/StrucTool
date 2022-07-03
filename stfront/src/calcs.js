@@ -29,6 +29,22 @@ const spacing_x = 0;
 const spacing_y = 0;
 //size effect factor
 const include = false;
-
-
+const lamda_s = 0;
 ///////////////////calcs////////////////////////
+//one way shear
+const P_sw = X_ftg/12 * Y_ftg/12 * h/12 * 0.15;
+const P_service_net = P_dl + P_ll;
+const P_u_net = Math.max(1.2*P_dl + 1.6*P_ll, 1.4*P_dl);
+const q_u_net = P_u_net / (X_ftg/12 * Y_ftg/12);
+const phi_v = .75;
+    //x-dir
+
+    //y-dir
+
+//bearing
+
+//flexure about y-axis
+
+//flexure about x-axis
+
+//two way shear
