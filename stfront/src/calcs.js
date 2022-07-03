@@ -42,6 +42,8 @@ const phi_v = .75;
     //y-dir
 
 //bearing
+const q_svc_gross = include_ftg_sw == true ? (P_service_net + P_sw) / (X_ftg/12 * Y_ftg/12) + w_overburden : (P_service_net) / (X_ftg/12 * Y_ftg/12) + w_overburden;
+const bearing_DCR = q_allow != "" ? q_svc_gross / q_allow : "";
 
 //flexure about y-axis
 
