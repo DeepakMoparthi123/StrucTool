@@ -35,7 +35,7 @@ const x_number_bars = 23;
 const x_f_y = 60;
 //flexure reinforcement y-dir
 const y_bar_size = 5;
-const y_number_bars = 23;
+const y_number_bars = 20;
 const y_f_y = 60;
 //shear reinforcement (optional)
 const shear_f_yt = 60;
@@ -65,6 +65,17 @@ const phi_b_y = epsilon_t_y < .002 ? .65 : epsilon_t_y > .005 ? .9 : .65 + (epsi
 const phiMn_y = phi_b_y * A_st_provided_y * x_f_y * (d - a_y/2);
 const M_u_y = q_u_net * (X_ftg/12/2 - X_col/12/2)**2 / 2 * Y_ftg;
 const flexure_y_DCR = M_u_y / phiMn_y;
+        //additional checks
+const A_st_min_y = rho_min * Y_ftg * h;
+if (A_st_min_y > A_st_provided_y) {
+    console.log("Minimum area of steel about y-axis check FAILED. Increase Reinf.")
+}
+const bar_spacing_y = x_number_bars == 1 ? "N/A" : (Y_ftg - cover - cover) / (x_number_bars - 1);
+if (x_number_bars < 1 && bar_spacing_y >= Math.min(18, 3*h)) {
+    console.log("Maximum bar spacing about y-axis check FAILED. Increase Spacing.")
+}
+//TODO: bar development length check
+
     //about x-axis
 const A_st_provided_x = getArea(y_bar_size) * y_number_bars;
 const a_x = A_st_provided_x * y_f_y / .85 / X_ftg / f_c;
@@ -96,6 +107,11 @@ const one_way_shear_DCR = Math.max(one_way_shear_x_DCR, one_way_shear_y_DCR);
 //bearing
 const q_svc_gross = include_ftg_sw == true ? (P_service_net + P_sw) / (X_ftg/12 * Y_ftg/12) + w_overburden : (P_service_net) / (X_ftg/12 * Y_ftg/12) + w_overburden;
 const bearing_DCR = q_allow != "" ? q_svc_gross / q_allow : "";
+if (bearing_DCR > 1) {
+    console.log("Bearing check FAILS with a DCR of " + bearing_DCR.toFixed(2));
+} else {
+    console.log("Bearing check passes with a DCR of " + bearing_DCR.toFixed(2))
+}
 //two way shear
 const b_o = (X_col + d + Y_col + d) * 2;
 const beta_two_way = Math.max(X_col, Y_col) / Math.min(X_col, Y_col);
