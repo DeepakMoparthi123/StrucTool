@@ -48,6 +48,7 @@ const lamda_s = 1;
 
 ///////////////////calcs////////////////////////
 const d = h - cover - Math.max(getDia(x_bar_size), getDia(y_bar_size)) - Math.min(getDia(x_bar_size), getDia(y_bar_size)) / 2;
+//forces
 const P_sw = X_ftg/12 * Y_ftg/12 * h/12 * 0.15;
 const P_service_net = P_dl + P_ll;
 const P_u_net = Math.max(1.2*P_dl + 1.6*P_ll, 1.4*P_dl);
@@ -78,7 +79,8 @@ const phi_v = .75;
     //x-dir
 const r_w_xdir = A_st_provided_y / Y_ftg / d;
 const phi_V_cx = phi_v * Math.max(8 * lamda_s * (r_w_xdir ** (1/3)), 1) * Math.sqrt(Math.min(f_c, 10)*1000) * d/1000;
-const phi_V_sx = shear_f_yt != "" && shear_bar_size != "" && spacing_x != "" && spacing_y != "" ? Math.min(8 * Math.sqrt(f_c*1000) * d/1000, phi_v * getArea(shear_bar_size) * Y_ftg / spacing_y * shear_f_yt * d/spacing_x / Y_ftg) : 0;
+const phi_V_sx = shear_f_yt != "" && shear_bar_size != "" && spacing_x != "" && spacing_y != "" ? Math.min(8 * 
+    Math.sqrt(f_c*1000) * d/1000, phi_v * getArea(shear_bar_size) * Y_ftg / spacing_y * shear_f_yt * d/spacing_x / Y_ftg) : 0;
 const phi_V_nx = phi_V_cx + phi_V_sx;
 const V_ux = Math.max((X_ftg/12/2 - X_col/12/2 - d/12) * q_u_net/12, 0)
 const one_way_shear_x_DCR = V_ux / phi_V_nx ;
@@ -94,14 +96,23 @@ const one_way_shear_DCR = Math.max(one_way_shear_x_DCR, one_way_shear_y_DCR);
 //bearing
 const q_svc_gross = include_ftg_sw == true ? (P_service_net + P_sw) / (X_ftg/12 * Y_ftg/12) + w_overburden : (P_service_net) / (X_ftg/12 * Y_ftg/12) + w_overburden;
 const bearing_DCR = q_allow != "" ? q_svc_gross / q_allow : "";
-
-
 //two way shear
+const b_o = (X_col + d + Y_col + d) * 2;
+const beta_two_way = Math.max(X_col, Y_col) / Math.min(X_col, Y_col);
+const phi_V_s = shear_f_yt != "" && shear_bar_size != "" && spacing_x != "" && spacing_y != "" ? phi_v * getArea(shear_bar_size) * 
+    shear_f_yt * b_o * (2*X_ftg/(2*X_ftg/12 + 2*Y_ftg/12)/12 / spacing_x + 2*Y_ftg / (2*X_ftg/12 + 2*Y_ftg/12)/12/spacing_y) * d/(0.5*(spacing_y + spacing_x)) : 0;
+const two_way_factor = phi_V_s == 0 ? Math.min(2 + 4/beta_two_way, 40 * d / b_o + 2, 4) : 2;
+const phi_V_c = phi_v * two_way_factor * Math.sqrt(Math.min(f_c, 10) * 1000) * b_o * d / 1000 * lamda_s;
+const phi_V_n = Math.min(phi_V_c + phi_V_s, 8*Math.sqrt(f_c*1000)/1000 * b_o * d);
+const V_u = Math.max(P_u_net - (X_col + d) * (Y_col + d) /12/12 * q_u_net, 0);
+const two_way_shear_DCR = V_u / phi_V_n;
 
 console.log(bearing_DCR);
 console.log(one_way_shear_DCR)
-console.log(beta)
 console.log(flexure_x_DCR)
 console.log(flexure_y_DCR)
+console.log(two_way_shear_DCR)
+
+
 
 
