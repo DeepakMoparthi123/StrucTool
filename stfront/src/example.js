@@ -1,37 +1,129 @@
 import React from "react";
-import { Accordion } from "semantic-ui-react";
+import { Accordion, AccordionDetails, Icon } from "semantic-ui-react";
 
-const level1Panels = [
-  { key: "panel-1a", title: "Level 1A", content: "Level 1A Contents" },
-  { key: "panel-ba", title: "Level 1B", content: "Level 1B Contents" }
+let jsonData = [
+    {
+        key: "Level1",
+        title: "Level1",
+        content: [
+            {
+                key: "Menu",
+                title: "Menu",
+                content: [
+                    {
+                        key: "Sharing",
+                        title: "Sharing",
+                        content: [
+                            {
+                                key: "Home",
+                                title: "Home",
+                                content: [],
+                            },
+
+                            {
+                                key: "Profile",
+                                title: "Profile",
+                                content: [
+                                    {
+                                        key: "Account",
+                                        title: "Account",
+                                        content: [],
+                                    },
+                                    {
+                                        key: "Followers",
+                                        title: "Followers",
+                                        content: [],
+                                    },
+                                ],
+                            },
+                            {
+                                key: "Request",
+                                title: "Request",
+                                content: [
+                                    {
+                                        key: "Exhange",
+                                        title: "Exchange",
+                                        content: [],
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                key: "Settings",
+                title: "Settings",
+                content: [
+                    {
+                        key: "Profile Setting",
+                        title: "Profile Setting",
+                        content: [],
+                    },
+                ],
+            },
+        ],
+    },
+    {
+        key: "Level2",
+        title: "Level2",
+        content: [
+            {
+                key: "Level2A",
+                title: "Level2A",
+                content: [
+                    {
+                        key: "Level2A-Child",
+                        title: "Level2A-Child",
+                        content: [],
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
-const Level1Content = (
-  <div>
-    Welcome to level 1
-    <Accordion.Accordion panels={level1Panels} />
-  </div>
+//Main algorithm
+function accordify(jsonData) {
+    if (jsonData.length === 0) {
+        return;
+    } else {
+        for (let i = 0; i < jsonData.length; i++) {
+            accordify(jsonData[i]["content"]);
+
+            if (jsonData[i]["content"].length !== 0) {
+                jsonData[i]["content"] = {
+                    content: (
+                        <div>
+                            <Accordion.Content content={jsonData[i]["content"]} />
+                            <Accordion.Accordion panels={jsonData[i]["content"]} />
+                        </div>
+                    ),
+                };
+            } else {
+                jsonData[i]["content"] = {
+                    content: (
+                        <div>
+                            <Accordion.Content content={jsonData[i]["content"]} />
+
+                        </div>
+                    ),
+                };
+            }
+        }
+    }
+}
+
+
+//Feed the transformed jsonData to panels prop and export
+const AccordionExampleNested = (props) => (
+    <Accordion defaultActiveIndex={0} panels={props.jsonExample} styled />
 );
 
-const level2Panels = [
-  { key: "panel-2a", title: "Level 2A", content: "Level 2A Contents" },
-  { key: "panel-2b", title: "Level 2B", content: "Level 2B Contents" }
-];
+{/* < Accordion defaultActiveIndex={0} panels={
+    jsonData
+    //(() => { console.log(jsonData); accordify(jsonData); return jsonData })()
+} styled /> */}
 
-const Level2Content = (
-  <div>
-    Welcome to level 2
-    <Accordion.Accordion panels={level2Panels} />
-  </div>
-);
-
-const rootPanels = [
-  { key: "panel-1", title: "Level 1", content: { content: Level1Content } },
-  { key: "panel-2", title: "Level 2", content: { content: Level2Content } }
-];
-
-const AccordionExampleNested = () => (
-  <Accordion defaultActiveIndex={0} panels={rootPanels} styled />
-);
 
 export default AccordionExampleNested;
