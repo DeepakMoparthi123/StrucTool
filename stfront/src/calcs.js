@@ -68,11 +68,11 @@ const flexure_y_DCR = M_u_y / phiMn_y;
         //additional checks
 const A_st_min_y = rho_min * Y_ftg * h;
 if (A_st_min_y > A_st_provided_y) {
-    console.log("Minimum area of steel about y-axis check FAILED. Increase Reinf.")
+    console.log("Minimum flexural area of steel about y-axis check FAILED. Increase Reinf.")
 }
 const bar_spacing_y = x_number_bars == 1 ? "N/A" : (Y_ftg - cover - cover) / (x_number_bars - 1);
 if (x_number_bars < 1 && bar_spacing_y >= Math.min(18, 3*h)) {
-    console.log("Maximum bar spacing about y-axis check FAILED. Increase Spacing.")
+    console.log("Maximum flexural bar spacing about y-axis check FAILED. Increase Spacing.")
 }
 //TODO: bar development length check
 
@@ -85,6 +85,27 @@ const phi_b_x = epsilon_t_x < .002 ? .65 : epsilon_t_x > .005 ? .9 : .65 + (epsi
 const phiMn_x = phi_b_x * A_st_provided_x * y_f_y * (d - a_x/2);
 const M_u_x = q_u_net * (Y_ftg/12/2 - Y_col/12/2)**2 / 2 * X_ftg;
 const flexure_x_DCR = M_u_x / phiMn_x;
+        //DCR Check
+if (flexure_x_DCR > 1 && flexure_y_DCR > 1) {
+    console.log("Flexural check FAILS about the x-axis and y-axis with DCR's of ".concat(flexure_x_DCR.toFixed(2)), "and", flexure_y_DCR.toFixed(2), "respectively");
+} else if (flexure_x_DCR > 1 && flexure_y_DCR <= 1) {
+    console.log("Flexural check FAILS about the x-axis with a DCR of " + flexure_x_DCR.toFixed(2));
+} else if (flexure_x_DCR <= 1 && flexure_y_DCR > 1) {
+    console.log("Flexural check FAILS about the y-axis with a DCR of " + flexure_y_DCR.toFixed(2));
+} else {
+    console.log("Flexural check passes about the x-axis and y-axis with DCR's of ".concat(flexure_x_DCR.toFixed(2)), "and", flexure_y_DCR.toFixed(2), "respectively");
+}
+        //additional checks
+const A_st_min_x = rho_min * X_ftg * h;
+if (A_st_min_x > A_st_provided_x) {
+    console.log("Minimum flexural area of steel about x-axis check FAILED. Increase Reinf.")
+}
+const bar_spacing_x = y_number_bars == 1 ? "N/A" : (X_ftg - cover - cover) / (y_number_bars - 1);
+if (y_number_bars < 1 && bar_spacing_x >= Math.min(18, 3*h)) {
+    console.log("Maximum flexural bar spacing about x-axis check FAILED. Increase Spacing.")
+}
+//TODO: bar development length check
+
 //one way shear
 const phi_v = .75;
     //x-dir
@@ -123,11 +144,11 @@ const phi_V_n = Math.min(phi_V_c + phi_V_s, 8*Math.sqrt(f_c*1000)/1000 * b_o * d
 const V_u = Math.max(P_u_net - (X_col + d) * (Y_col + d) /12/12 * q_u_net, 0);
 const two_way_shear_DCR = V_u / phi_V_n;
 
-console.log(bearing_DCR);
-console.log(one_way_shear_DCR)
-console.log(flexure_x_DCR)
-console.log(flexure_y_DCR)
-console.log(two_way_shear_DCR)
+// console.log(bearing_DCR);
+// console.log(one_way_shear_DCR)
+// console.log(flexure_x_DCR)
+// console.log(flexure_y_DCR)
+// console.log(two_way_shear_DCR)
 
 
 
